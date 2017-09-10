@@ -39,6 +39,7 @@ The constructor accepts the following named arguments:
 | `:subdirs_only`       | Optional  | `Boolean`   | An option to have `rsync` only sync files that are in subfolders of `:src_dir`. Defaults to `false`.                                                                                                                                          |
 | `:log_dir`            | Optional  | `String`    | `rsync_wrapper` has `rsync` pipe its results into a logfile so that the ruby code can then parse this file (and then deletes it). This option should be set to the absolute path of the directory where the temporary logfile will be stored. |
 | `:logfile`            | Optional  | `String`    | If the `:log_dir` is not specified, you can provide an explicit path for `rsync_wrapper`'s temporary logfile.                                                                                                                                 |
+| `:bwlimit`|Optional|`Integer`|From rsync's man pages: This option allows you to specify a maximum transfer rate in kilobytes per second. This option is most effective when using rsync with large files (several megabytes and up). Due to the nature of rsync transfers, blocks of data are sent, then if rsync determines the transfer was too fast, it will wait before sending the next data block. The result is an average transfer rate equaling the specified limit. A value of zero specifies no limit.|
 
 To execute `rsync`, invoke the `sync!` method which accepts a block with 2 parameters:
 
@@ -50,8 +51,8 @@ To execute `rsync`, invoke the `sync!` method which accepts a block with 2 param
 Example:
 
 ```ruby
-source_directory = '/Users/seanhuber/Documents/my_pdfs'
-destination_directory = '/Users/seanhuber/Documents/my_pdfs (copied)'
+source_directory = '/path/of/directory/you/want/to/sync'
+destination_directory = '/path/of/directory/to/sync/to'
 
 rsync = Rsync.new(src_dir: source_directory, dest_dir: destination_directory)
 

@@ -18,6 +18,11 @@ class Rsync
     else
       File.join(Dir.pwd, "rsync-#{SecureRandom.uuid}.log")
     end
+
+    @optional_arguments = [
+      :bwlimit,
+      # TODO: add rsync's other arguments that wouldn't interfere with the design of this gem https://linux.die.net/man/1/rsync
+    ].map{|arg| opts[arg] ? [arg, opts[arg]] : nil}.compact.to_h
   end
 
   def sync! &block
@@ -31,6 +36,9 @@ class Rsync
     rsync_opts = ['-ri', "--log-file '#{@logfile}'", '--size-only', '--prune-empty-dirs']
     rsync_opts += @inclusions.map{|inc| "--include '#{inc}'"}
     rsync_opts += @exclusions.map{|exc| "--exclude '#{exc}'"}
+
+    rsync_opts += @optional_arguments.map{|k,v| "--#{k}=#{v}"}
+
     cmd = "rsync #{rsync_opts.join(' ')} \"#{@dirs[:src_dir]}\" \"#{@dirs[:dest_dir]}\" > /dev/null 2>&1"
     `#{cmd}`
   end
